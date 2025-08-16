@@ -1,12 +1,9 @@
 import { useState } from 'react';
 import { X, User, Users, Bot, Library, FolderOpen, FileText } from 'lucide-react';
+import { useAppStore } from '../stores/appStore';
 
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+const Sidebar = () => {
+  const { isSidebarOpen, toggleSidebar } = useAppStore();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [expandedSubMenu, setExpandedSubMenu] = useState<string | null>(null);
 
@@ -17,40 +14,33 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const handleItemLeave = () => {
     setHoveredItem(null);
-    // Keep submenu open briefly for better UX
     setTimeout(() => setExpandedSubMenu(null), 200);
   };
 
   return (
     <>
-      {/* Overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={onClose}
-        />
+      {isSidebarOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleSidebar} />
       )}
 
-      {/* Sidebar */}
-      <div className={`
+      <div
+        className={`
         fixed top-0 left-0 h-full w-80 bg-white z-50 transform transition-transform duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        {/* Header */}
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}
+      >
         <div className="flex items-center justify-between p-6 border-b border-gray-300">
           <h2 className="text-xl font-semibold text-gray-800">Меню</h2>
-          <button 
-            onClick={onClose}
+          <button
+            onClick={toggleSidebar}
             className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
           >
             <X size={20} className="text-gray-600" />
           </button>
         </div>
 
-        {/* Menu Items */}
         <div className="p-4 space-y-2">
-          {/* Личный кабинет */}
-          <div 
+          <div
             className="relative"
             onMouseEnter={() => handleItemHover('profile')}
             onMouseLeave={handleItemLeave}
@@ -59,7 +49,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               <User size={20} />
               <span className="font-medium">Личный кабинет</span>
             </div>
-            
+
             {expandedSubMenu === 'profile' && (
               <div className="absolute left-full top-0 ml-2 w-64 bg-white rounded-lg p-4 shadow-xl border border-gray-200 z-50">
                 <div className="flex items-center space-x-3">
@@ -75,8 +65,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             )}
           </div>
 
-          {/* Ученики */}
-          <div 
+          <div
             className="relative"
             onMouseEnter={() => handleItemHover('students')}
             onMouseLeave={handleItemLeave}
@@ -85,7 +74,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               <Users size={20} />
               <span className="font-medium">Ученики</span>
             </div>
-            
+
             {expandedSubMenu === 'students' && (
               <div className="absolute left-full top-0 ml-2 w-72 bg-white rounded-lg p-4 shadow-xl border border-gray-200 z-50">
                 <h3 className="font-semibold mb-3 text-gray-800">Список учеников</h3>
@@ -107,14 +96,12 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             )}
           </div>
 
-          {/* Ассистент Lumi */}
           <div className="p-4 rounded-lg cursor-pointer flex items-center space-x-3 text-gray-700 hover:bg-gray-800 hover:text-white transition-colors">
             <Bot size={20} />
             <span className="font-medium">Ассистент Lumi</span>
           </div>
 
-          {/* Библиотека */}
-          <div 
+          <div
             className="relative"
             onMouseEnter={() => handleItemHover('library')}
             onMouseLeave={handleItemLeave}
@@ -123,7 +110,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               <Library size={20} />
               <span className="font-medium">Библиотека</span>
             </div>
-            
+
             {expandedSubMenu === 'library' && (
               <div className="absolute left-full top-0 ml-2 w-56 bg-white rounded-lg p-4 shadow-xl border border-gray-200 z-50">
                 <div className="space-y-2">
