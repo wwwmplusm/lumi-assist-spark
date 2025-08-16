@@ -56,6 +56,18 @@ class MaterialDetail(Material):
     content: str
 
 
+# --- Dashboard Schemas ---
+class DashboardStudent(BaseModel):
+    id: str
+    name: str
+    ungraded_submissions: int
+    graded_submissions: int
+
+
+class DashboardResponse(BaseModel):
+    students: List[DashboardStudent]
+
+
 # --- Assignment Schemas ---
 class AssignmentCreateRequest(BaseModel):
     title: str = Field("Новое задание", min_length=1, max_length=100)
@@ -107,6 +119,15 @@ class TeacherSubmissionView(BaseModel):
     ai_feedback: Dict[str, Any] | None = None
     final_score: float | None = None
     final_feedback: str | None = None
+
+
+class FinalGradeRequest(BaseModel):
+    final_score: float = Field(..., ge=0, le=1)
+    final_feedback: str | None = None
+
+
+class StudentDashboardResponse(BaseModel):
+    assignments: List[StudentAssignmentView]
 
 
 # --- AI Schemas ---
