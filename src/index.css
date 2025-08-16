@@ -1,42 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Commissioner:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Lumi AI Educational App Design System */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core Colors - Dark Tech Theme */
+    --background: 220 25% 8%;
+    --foreground: 0 0% 100%;
+    
+    /* Tech Background Gradient */
+    --tech-bg-start: 220 35% 12%;
+    --tech-bg-end: 220 25% 6%;
+    --grid-color: 210 30% 15%;
+    
+    /* Neon Glow Colors */
+    --neon-primary: 0 0% 100%;
+    --neon-glow: 210 100% 70%;
+    --neon-shadow: 210 100% 50%;
+    
+    /* UI Element Colors */
+    --prompt-bg: 210 20% 96%;
+    --prompt-border: 210 30% 75%;
+    --prompt-text: 0 0% 62%;
+    
+    /* Sidebar Colors */
+    --sidebar-bg: 210 30% 75%;
+    --sidebar-hover-bg: 220 50% 12%;
+    --sidebar-text: 220 25% 8%;
+    --sidebar-hover-text: 0 0% 100%;
+    
+    /* Accent Colors */
+    --accent-blue: 210 100% 60%;
+    --accent-blue-light: 210 30% 75%;
+    
+    /* Standard Design Tokens */
+    --card: 220 25% 10%;
+    --card-foreground: 0 0% 100%;
+    
+    --popover: 220 25% 10%;
+    --popover-foreground: 0 0% 100%;
+    
+    --primary: 210 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 220 25% 15%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 220 25% 12%;
+    --muted-foreground: 210 10% 70%;
+    
+    --border: 220 25% 20%;
+    --input: 220 25% 15%;
+    --ring: 210 100% 60%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -94,12 +115,93 @@ All colors MUST be HSL.
   }
 }
 
+  /* Neon Glow Effects */
+  --glow-radius: 20px;
+  --glow-spread: 8px;
+  }
+}
+
+/* Custom Animations & Effects */
+@layer components {
+  .neon-glow {
+    color: hsl(var(--neon-primary));
+    text-shadow: 
+      0 0 5px hsl(var(--neon-glow) / 0.5),
+      0 0 10px hsl(var(--neon-glow) / 0.4),
+      0 0 15px hsl(var(--neon-glow) / 0.3),
+      0 0 20px hsl(var(--neon-shadow) / 0.2);
+    animation: neon-pulse 2s ease-in-out infinite alternate;
+  }
+  
+  .tech-grid-bg {
+    background: 
+      linear-gradient(hsl(var(--tech-bg-start)), hsl(var(--tech-bg-end))),
+      linear-gradient(90deg, hsl(var(--grid-color)) 1px, transparent 1px),
+      linear-gradient(hsl(var(--grid-color)) 1px, transparent 1px);
+    background-size: 100% 100%, 50px 50px, 50px 50px;
+    background-position: 0 0, 0 0, 0 0;
+    animation: grid-move 20s linear infinite;
+  }
+  
+  .prompt-input {
+    background-color: hsl(var(--prompt-bg));
+    border-color: hsl(var(--prompt-border));
+    color: hsl(var(--sidebar-text));
+  }
+  
+  .prompt-input::placeholder {
+    color: hsl(var(--prompt-text));
+  }
+  
+  .sidebar-panel {
+    background-color: hsl(var(--sidebar-bg));
+    color: hsl(var(--sidebar-text));
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .sidebar-item:hover {
+    background-color: hsl(var(--sidebar-hover-bg));
+    color: hsl(var(--sidebar-hover-text));
+  }
+  
+  .hamburger-line {
+    background-color: hsl(var(--foreground));
+    transition: all 0.3s ease;
+  }
+}
+
+@keyframes neon-pulse {
+  from {
+    text-shadow: 
+      0 0 5px hsl(var(--neon-glow) / 0.5),
+      0 0 10px hsl(var(--neon-glow) / 0.4),
+      0 0 15px hsl(var(--neon-glow) / 0.3),
+      0 0 20px hsl(var(--neon-shadow) / 0.2);
+  }
+  to {
+    text-shadow: 
+      0 0 8px hsl(var(--neon-glow) / 0.8),
+      0 0 16px hsl(var(--neon-glow) / 0.6),
+      0 0 24px hsl(var(--neon-glow) / 0.4),
+      0 0 32px hsl(var(--neon-shadow) / 0.3);
+  }
+}
+
+@keyframes grid-move {
+  0% {
+    background-position: 0 0, 0 0, 0 0;
+  }
+  100% {
+    background-position: 0 0, 50px 50px, 50px 50px;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-['Commissioner'];
   }
 }
