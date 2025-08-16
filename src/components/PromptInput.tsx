@@ -32,7 +32,7 @@ const PromptInput = () => {
               />
               
               {/* Dropdown Content */}
-              <div className="absolute bottom-full right-0 mb-2 w-64 bg-white rounded-lg shadow-lg border z-20 p-2">
+              <div className="absolute bottom-full right-0 mb-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-30 p-2">
                 <button 
                   className="w-full text-left p-3 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-gray-700 transition-colors"
                   onClick={() => setIsDropdownOpen(false)}
