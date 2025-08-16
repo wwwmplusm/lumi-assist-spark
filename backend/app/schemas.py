@@ -92,10 +92,21 @@ class StudentAssignmentView(BaseModel):
     title: str
     deadline: datetime | None = None
     status: SubmissionStatus
+    canvas_json: List[Dict[str, Any]]
 
 
 class StudentSubmissionRequest(BaseModel):
     answers: Dict[str, Any]
+
+
+class TeacherSubmissionView(BaseModel):
+    student_name: str
+    submitted_at: datetime | None = None
+    answers: Dict[str, Any]
+    ai_score: float | None = None
+    ai_feedback: Dict[str, Any] | None = None
+    final_score: float | None = None
+    final_feedback: str | None = None
 
 
 # --- AI Schemas ---

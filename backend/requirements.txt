@@ -2,6 +2,7 @@ fastapi
 uvicorn[standard]
 SQLAlchemy
 pydantic
+openai==1.93.0
 
 # Testing
 pytest
