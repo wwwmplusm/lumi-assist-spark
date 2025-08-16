@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..services import submission_service
 from ..db import get_db
+from ..security import get_current_submission
 
 router = APIRouter(prefix="/api/s", tags=["Student"])
 
@@ -54,4 +55,29 @@ def handle_submit_answers(
     return {
         "message": "Assignment submitted successfully. Your results will be available soon.",
     }
+
+
+@router.get("/dashboard/{access_token}", response_model=schemas.StudentDashboardResponse)
+def handle_get_student_dashboard(
+    submission: models.Submission = Depends(get_current_submission),
+    db: Session = Depends(get_db),
+):
+    """List all assignments for the student associated with the token."""
+
+    all_submissions = submission_service.get_all_submissions_for_student(
+        db, submission.student_id
+    )
+
+    assignment_views = []
+    for sub in all_submissions:
+        assignment_views.append(
+            schemas.StudentAssignmentView(
+                assignment_id=sub.assignment.id,
+                title=sub.assignment.title,
+                deadline=sub.assignment.deadline,
+                status=sub.status,
+                canvas_json=[],
+            )
+        )
+    return {"assignments": assignment_views}
 

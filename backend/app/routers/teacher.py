@@ -11,6 +11,17 @@ from ..security import get_current_teacher
 router = APIRouter(prefix="/api/teacher", tags=["Teacher"])
 
 
+@router.get("/dashboard", response_model=schemas.DashboardResponse)
+def handle_get_dashboard(
+    db: Session = Depends(get_db),
+    teacher: models.Teacher = Depends(get_current_teacher),
+):
+    """Provide aggregated statistics for the teacher dashboard."""
+
+    students_data = teacher_service.get_dashboard_data(db, teacher_id=teacher.id)
+    return {"students": students_data}
+
+
 @router.post("/assignments", response_model=schemas.AssignmentResponse, status_code=201)
 def handle_create_assignment(
     request: schemas.AssignmentCreateRequest,
@@ -138,3 +149,22 @@ def handle_get_submission_for_review(
         final_score=submission.final_score,
         final_feedback=submission.final_feedback,
     )
+
+
+@router.post("/submissions/{submission_id}/grade")
+def handle_finalize_grade(
+    submission_id: str,
+    grade_data: schemas.FinalGradeRequest,
+    db: Session = Depends(get_db),
+    teacher: models.Teacher = Depends(get_current_teacher),
+):
+    """Save the final grade and feedback from the teacher."""
+
+    submission = submission_service.get_submission_for_teacher(
+        db, submission_id, teacher.id
+    )
+    if not submission:
+        raise HTTPException(status_code=404, detail="Submission not found")
+
+    submission_service.finalize_grade(db, submission, grade_data)
+    return {"message": "Grade finalized successfully."}

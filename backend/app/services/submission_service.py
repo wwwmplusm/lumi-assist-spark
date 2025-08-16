@@ -72,3 +72,34 @@ def get_submission_for_teacher(
         .first()
     )
 
+
+def finalize_grade(
+    db: Session, submission: models.Submission, grade_data: schemas.FinalGradeRequest
+) -> models.Submission:
+    """Apply the teacher's final grade and feedback to a submission."""
+
+    if submission.status == models.SubmissionStatus.PENDING:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot grade a submission that has not been submitted.",
+        )
+
+    submission.final_score = grade_data.final_score
+    submission.final_feedback = grade_data.final_feedback
+    submission.status = models.SubmissionStatus.GRADED
+    submission.graded_at = datetime.utcnow()
+    db.commit()
+    db.refresh(submission)
+    return submission
+
+
+def get_all_submissions_for_student(db: Session, student_id: str) -> list[models.Submission]:
+    """Fetch all submissions along with assignments for a student."""
+
+    return (
+        db.query(models.Submission)
+        .options(joinedload(models.Submission.assignment))
+        .filter(models.Submission.student_id == student_id)
+        .all()
+    )
+

@@ -12,3 +12,16 @@ async def get_current_teacher(x_teacher_id: str = Header(...), db: Session = Dep
     if not teacher:
         raise HTTPException(status_code=403, detail="Invalid Teacher ID")
     return teacher
+
+
+async def get_current_submission(access_token: str, db: Session = Depends(get_db)) -> models.Submission:
+    """Retrieve a submission by its access token."""
+
+    submission = (
+        db.query(models.Submission)
+        .filter(models.Submission.access_token == access_token)
+        .first()
+    )
+    if not submission:
+        raise HTTPException(status_code=404, detail="Invalid access token")
+    return submission
