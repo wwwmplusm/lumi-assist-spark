@@ -1,25 +1,108 @@
-"""Pydantic schemas defining API contracts for the Lumi AI backend."""
+from pydantic import BaseModel, Field, EmailStr
+from typing import Any, List, Dict
+from datetime import datetime
+from .models import AssignmentStatus, SubmissionStatus
 
-from typing import Any, List
-from pydantic import BaseModel
-from .models import AssignmentStatus
+
+# --- Base Schemas for Models ---
+class Student(BaseModel):
+    id: str
+    name: str
+    email: EmailStr | None = None
+
+    class Config:
+        from_attributes = True
 
 
+class Teacher(BaseModel):
+    id: str
+    email: EmailStr
+    name: str | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class Material(BaseModel):
+    id: str
+    title: str
+    description: str | None = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# --- Authentication Schemas ---
+class TeacherCreate(BaseModel):
+    email: EmailStr
+    name: str | None = None
+
+
+# --- Student Management Schemas ---
+class StudentCreate(BaseModel):
+    name: str = Field(..., min_length=1)
+    email: EmailStr | None = None
+
+
+# --- Material Management Schemas ---
+class MaterialCreate(BaseModel):
+    title: str = Field(..., min_length=1)
+    content: str = Field(..., min_length=10)
+    description: str | None = None
+
+
+class MaterialDetail(Material):
+    content: str
+
+
+# --- Assignment Schemas ---
 class AssignmentCreateRequest(BaseModel):
-    """Schema for creating a new assignment."""
+    title: str = Field("Новое задание", min_length=1, max_length=100)
 
-    title: str = "Новое задание"
+
+class AssignmentUpdateRequest(BaseModel):
+    title: str = Field(..., min_length=1, max_length=100)
+    canvas_json: List[Dict[str, Any]]
+
+
+class AssignmentPublishRequest(BaseModel):
+    student_ids: List[str]
+    deadline: datetime | None = None
 
 
 class AssignmentResponse(BaseModel):
-    """Schema representing assignment data returned by the API."""
-
     assignment_id: str
     title: str
     status: AssignmentStatus
-    canvas_json: List[Any]
+    canvas_json: List[Dict[str, Any]]
 
     class Config:
-        """Pydantic configuration."""
-
         from_attributes = True
+
+
+class PublishedLink(BaseModel):
+    student_name: str
+    link: str  # This will be constructed in the service
+
+
+# --- Submission Schemas (for Student) ---
+class StudentAssignmentView(BaseModel):
+    assignment_id: str
+    title: str
+    deadline: datetime | None = None
+    status: SubmissionStatus
+
+
+class StudentSubmissionRequest(BaseModel):
+    answers: Dict[str, Any]
+
+
+# --- AI Schemas ---
+class AIGenerateRequest(BaseModel):
+    source_text: str = Field(..., min_length=20)
+    prompt: str | None = "Generate 3 diverse questions"
+
+
+class AIGenerateResponse(BaseModel):
+    blocks: List[Dict[str, Any]]
